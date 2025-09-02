@@ -4,26 +4,20 @@ Disaster Connect (Crowdsourced Emergency Web Platform) An open-source, web-based
 
 🔧 Step-by-Step Setup
 
-1.  Create Root Folder
+    Create Root Folder
     mkdir DisasterConnect
     cd DisasterConnect
 
-2.  Create Backend (Django)
-
-# Create and activate virtual environment
+# Create virtual env & activate
 
 python -m venv env
-source env/bin/activate # or `env\Scripts\activate` on Windows
+source env/bin/activate # Windows: env\Scripts\activate
 
-# Install Django and DRF
+# Install Django
 
-pip install django djangorestframework
+pip install django
 
-# Start Django project
+# Start project & app
 
-django-admin startproject disasterconnect backend
-cd backend
-
-# Start Django app
-
-python manage.py startapp api
+django-admin startproject disasterconnect .
+python manage.py startapp disasterapp
