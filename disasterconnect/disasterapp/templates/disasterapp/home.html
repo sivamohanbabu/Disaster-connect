@@ -1,0 +1,169 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Disaster Connect</title>
+    <style>
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        height: 100%;
+      }
+
+      /* Navbar */
+      .navbar {
+        background-color: #0066cc;
+        padding: 15px 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: white;
+      }
+
+      .navbar .logo {
+        display: flex;
+        align-items: center;
+      }
+
+      .navbar .logo img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 10px;
+      }
+
+      .navbar a {
+        color: white;
+        text-decoration: none;
+        margin-left: 20px;
+        font-weight: bold;
+      }
+
+      .navbar a:hover {
+        text-decoration: underline;
+      }
+
+      /* Hero Section */
+      .hero {
+        background: url("{% static 'disasterapp/images/natural-disaster.jpg' %}")
+          no-repeat center center/cover;
+        height: 70vh; /* ✅ not full screen */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        color: white;
+      }
+
+      .hero-content h1 {
+        font-size: 3rem;
+        margin-bottom: 10px;
+      }
+
+      .hero-content p {
+        font-size: 1.5rem;
+      }
+
+      /* Footer */
+      .footer {
+        background-color: #003366;
+        color: white;
+        padding: 10px 0;
+        overflow: hidden;
+      }
+
+      .scroll-container {
+        display: flex;
+        align-items: center;
+        animation: scroll-left 20s linear infinite;
+      }
+
+      .scroll-container img {
+        height: 50px;
+        margin: 0 30px;
+      }
+
+      .scroll-container span {
+        font-weight: bold;
+        margin: 0 40px;
+        white-space: nowrap;
+      }
+
+      @keyframes scroll-left {
+        0% {
+          transform: translateX(100%);
+        }
+        100% {
+          transform: translateX(-100%);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navbar -->
+    <div class="navbar">
+      <div class="logo">
+        <img
+          src="{% static 'disasterapp/images/natural-disaster.jpg' %}"
+          alt="Logo"
+        />
+        <span>Disaster Connect</span>
+      </div>
+      <div>
+        <a href="{% url 'volunteer_login' %}">Volunteer Login</a>
+        <a href="{% url 'supervisor_login' %}">Supervisor Login</a>
+        <a href="{% url 'admin_login' %}">Admin Login</a>
+      </div>
+    </div>
+
+    <!-- Hero Section -->
+    <div class="hero">
+      <div class="hero-content">
+        <h1>Disaster Connect</h1>
+        <p>Rebuilding Lives Through Connection</p>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <div class="scroll-container">
+        <span>Emergency Helpline Services:</span>
+
+        <span>Andhra Pradesh</span>
+        <span>Arunachal Pradesh</span>
+        <span>Assam</span>
+        <span>Bihar</span>
+        <span>Chhattisgarh</span>
+        <span>Goa</span>
+        <span>Gujarat</span>
+        <span>Haryana</span>
+        <span>Himachal Pradesh</span>
+        <span>Jharkhand</span>
+        <span>Karnataka</span>
+        <span>Kerala</span>
+        <span>Madhya Pradesh</span>
+        <span>Maharashtra</span>
+        <span>Manipur</span>
+        <span>Meghalaya</span>
+        <span>Mizoram</span>
+        <span>Nagaland</span>
+        <span>Odisha</span>
+        <span>Punjab</span>
+        <span>Rajasthan</span>
+        <span>Sikkim</span>
+        <span>Tamil Nadu</span>
+        <span>Telangana</span>
+        <span>Tripura</span>
+        <span>Uttar Pradesh</span>
+        <span>Uttarakhand</span>
+        <span>West Bengal</span>
+
+        <span>Government Disaster Relief Support</span>
+      </div>
+    </div>
+  </body>
+</html>
