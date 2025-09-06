@@ -2,9 +2,9 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset=a"UTF-8" />
+    <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Disaster Connect</title>
+    <title>{{ user_type|title }} Login - Disaster Connect</title>
     <style>
       body,
       html {
@@ -51,21 +51,68 @@
       .hero {
         background: url("{% static 'disasterapp/images/natural-disaster.jpg' %}")
           no-repeat center center/cover;
-        height: 85vh; /* ✅ not full screen */
+        height: 85vh;
         display: flex;
         justify-content: center;
         align-items: center;
         text-align: center;
         color: white;
+        position: relative;
       }
 
-      .hero-content h1 {
-        font-size: 3rem;
-        margin-bottom: 0px;
+      /* Login Card */
+      .login-card {
+        background: white;
+        color: black;
+        border-radius: 12px;
+        padding: 40px;
+        width: 350px;
+        box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.3);
+        text-align: center;
       }
 
-      .hero-content p {
-        font-size: 1.5rem;
+      .login-card h2 {
+        margin-bottom: 20px;
+        color: #333;
+      }
+
+      /* Form Styling */
+      .login-card form {
+        display: flex;
+        flex-direction: column;
+        text-align: left;
+      }
+
+      .login-card label {
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: #444;
+        display: block;
+      }
+
+      .login-card input,
+      .login-card select {
+        margin-bottom: 15px;
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+        width: 100%;
+      }
+
+      .login-card button {
+        padding: 12px;
+        background: #0077ff;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+
+      .login-card button:hover {
+        background: #005ecc;
       }
 
       /* Footer */
@@ -80,11 +127,6 @@
         display: flex;
         align-items: center;
         animation: scroll-left 20s linear infinite;
-      }
-
-      .scroll-container img {
-        height: 50px;
-        margin: 0 30px;
       }
 
       .scroll-container span {
@@ -120,11 +162,18 @@
       </div>
     </div>
 
-    <!-- Hero Section -->
+    <!-- Hero with Login Form -->
     <div class="hero">
-      <div class="hero-content">
-        <h1>Disaster Connect</h1>
-        <p>Rebuilding Lives Through Connection</p>
+      <div class="login-card">
+        <h2>{{ user_type|title }} Login</h2>
+        <form method="post">
+          {% csrf_token %} {% for field in form %}
+          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }} {% if field.errors %}
+          <div style="color: red; font-size: 13px">{{ field.errors }}</div>
+          {% endif %} {% endfor %}
+          <button type="submit">Login</button>
+        </form>
       </div>
     </div>
 
@@ -132,7 +181,6 @@
     <div class="footer">
       <div class="scroll-container">
         <span>Emergency Helpline Services:</span>
-
         <span>Andhra Pradesh</span>
         <span>Arunachal Pradesh</span>
         <span>Assam</span>
@@ -161,7 +209,6 @@
         <span>Uttar Pradesh</span>
         <span>Uttarakhand</span>
         <span>West Bengal</span>
-
         <span>Government Disaster Relief Support</span>
       </div>
     </div>

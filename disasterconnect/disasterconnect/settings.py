@@ -110,6 +110,7 @@ TIME_ZONE = "UTC"
 USE_I18N = True
 
 USE_TZ = True
+AUTH_USER_MODEL = "disasterapp.CustomUser"
 
 
 # Static files (CSS, JavaScript, Images)

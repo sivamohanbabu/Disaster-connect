@@ -1,28 +1,46 @@
-"""
-URL configuration for disasterconnect project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/5.2/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
-
-from django.contrib import admin
 from django.urls import path
 from disasterapp import views
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
     path("", views.home, name="home"),
-    path("volunteer/login/", views.volunteer_login, name="volunteer_login"),
-    path("supervisor/login/", views.supervisor_login, name="supervisor_login"),
-    path("admin/login/", views.admin_login, name="admin_login"),
+    # Volunteer
+    path(
+        "volunteer/signup/",
+        views.signup_view,
+        {"user_type": "volunteer"},
+        name="volunteer_signup",
+    ),
+    path(
+        "volunteer/login/",
+        views.login_view,
+        {"user_type": "volunteer"},
+        name="volunteer_login",
+    ),
+    # Supervisor
+    path(
+        "supervisor/signup/",
+        views.signup_view,
+        {"user_type": "supervisor"},
+        name="supervisor_signup",
+    ),
+    path(
+        "supervisor/login/",
+        views.login_view,
+        {"user_type": "supervisor"},
+        name="supervisor_login",
+    ),
+    # Admin
+    path(
+        "adminuser/signup/",
+        views.signup_view,
+        {"user_type": "adminuser"},
+        name="admin_signup",
+    ),
+    path(
+        "adminuser/login/",
+        views.login_view,
+        {"user_type": "adminuser"},
+        name="admin_login",
+    ),
+    path("profile/", views.profile_view, name="profile"),
 ]

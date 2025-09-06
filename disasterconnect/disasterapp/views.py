@@ -1,18 +1,62 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login, logout
+from .forms import SignUpForm, LoginForm
 from django.http import HttpResponse
+from .models import CustomUser
 
 
 def home(request):
     return render(request, "disasterapp/home.html")
 
 
-def volunteer_login(request):
-    return HttpResponse("Volunteer Login Page (placeholder)")
+def signup_view(request, user_type):
+    if request.method == "POST":
+        form = SignUpForm(request.POST, request.FILES)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.user_type = user_type
+            # Latitude and Longitude from hidden fields
+            user.latitude = request.POST.get("latitude")
+            user.longitude = request.POST.get("longitude")
+            user.save()
+
+            # Redirect to the correct login based on user_type
+            if user_type == "volunteer":
+                return redirect("volunteer_login")
+            elif user_type == "supervisor":
+                return redirect("supervisor_login")
+            elif user_type == "adminuser":
+                return redirect("admin_login")
+
+    else:
+        form = SignUpForm(initial={"user_type": user_type})
+    return render(
+        request, "disasterapp/signup.html", {"form": form, "user_type": user_type}
+    )
 
 
-def supervisor_login(request):
-    return HttpResponse("Supervisor Login Page (placeholder)")
+def login_view(request, user_type):
+    if request.method == "POST":
+        form = LoginForm(request, data=request.POST)
+        if form.is_valid():
+            user = authenticate(
+                username=form.cleaned_data["username"],
+                password=form.cleaned_data["password"],
+            )
+            if user and user.user_type == user_type:
+                login(request, user)
+                return redirect("profile")  # 👈 redirect instead of HttpResponse
+    else:
+        form = LoginForm()
+    return render(
+        request, "disasterapp/login.html", {"form": form, "user_type": user_type}
+    )
 
 
-def admin_login(request):
-    return HttpResponse("Admin Login Page (placeholder)")
+from django.contrib.auth.decorators import login_required
+
+
+@login_required
+def profile_view(request):
+    user = request.user  # current logged-in user
+    return render(request, "disasterapp/profile.html", {"user": user})

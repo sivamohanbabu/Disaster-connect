@@ -1,0 +1,314 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ user_type|title }} Sign Up - Disaster Connect</title>
+    <style>
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        height: 100%;
+      }
+
+      /* Navbar */
+      .navbar {
+        background-color: #0066cc;
+        padding: 12px 25px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: white;
+        flex-wrap: wrap;
+        font-size: 14px;
+      }
+
+      .navbar .logo {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+      }
+
+      .navbar .logo img {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        margin-right: 8px;
+      }
+
+      .navbar a {
+        color: white;
+        text-decoration: none;
+        margin-left: 18px;
+        font-weight: 500;
+        font-size: 14px;
+      }
+
+      .navbar a:hover {
+        text-decoration: underline;
+      }
+
+      /* Hero Section */
+      .hero {
+        background: url("{% static 'disasterapp/images/natural-disaster.jpg' %}")
+          no-repeat center center/cover;
+        min-height: 85vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+      }
+
+      /* Signup Card */
+      .signup-card {
+        background: white;
+        color: black;
+        border-radius: 10px;
+        padding: 25px;
+        width: 100%;
+        max-width: 650px;
+        box-shadow: 0px 6px 18px rgba(0, 0, 0, 0.25);
+        text-align: center;
+        font-size: 13px;
+      }
+
+      .signup-card h2 {
+        margin-bottom: 18px;
+        color: #222;
+        font-size: 18px;
+        font-weight: 600;
+      }
+
+      /* Form Styling */
+      .signup-card form {
+        display: flex;
+        flex-direction: column;
+        text-align: left;
+      }
+
+      .form-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+
+      .form-group {
+        flex: 1 1 calc(50% - 12px);
+        display: flex;
+        flex-direction: column;
+      }
+
+      .signup-card label {
+        margin-bottom: 4px;
+        font-weight: 500;
+        font-size: 12px;
+        color: #444;
+      }
+
+      .signup-card input,
+      .signup-card select,
+      .signup-card textarea {
+        padding: 8px;
+        border-radius: 6px;
+        border: 1px solid #bbb;
+        font-size: 13px;
+        width: 100%;
+      }
+
+      .signup-card button {
+        padding: 10px;
+        background: #0077ff;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: 0.3s;
+        margin-top: 8px;
+      }
+
+      .signup-card button:hover {
+        background: #005ecc;
+      }
+
+      /* Footer */
+      .footer {
+        background-color: #003366;
+        color: white;
+        padding: 8px 0;
+        overflow: hidden;
+        font-size: 13px;
+      }
+
+      .scroll-container {
+        display: flex;
+        align-items: center;
+        animation: scroll-left 20s linear infinite;
+      }
+
+      .scroll-container span {
+        font-weight: 500;
+        margin: 0 30px;
+        white-space: nowrap;
+      }
+
+      @keyframes scroll-left {
+        0% {
+          transform: translateX(100%);
+        }
+        100% {
+          transform: translateX(-100%);
+        }
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .signup-card {
+          padding: 20px;
+          width: 100%;
+        }
+        .form-group {
+          flex: 1 1 100%;
+        }
+      }
+    </style>
+
+    <script>
+      function getLocation() {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(function (position) {
+            document.getElementById("lat").value = position.coords.latitude;
+            document.getElementById("lon").value = position.coords.longitude;
+          });
+        }
+      }
+    </script>
+  </head>
+  <body onload="getLocation()">
+    <!-- Navbar -->
+    <div class="navbar">
+      <div class="logo">
+        <img
+          src="{% static 'disasterapp/images/natural-disaster.jpg' %}"
+          alt="Logo"
+        />
+        <span>Disaster Connect</span>
+      </div>
+      <div>
+        <a href="{% url 'volunteer_login' %}">Volunteer Login</a>
+        <a href="{% url 'supervisor_login' %}">Supervisor Login</a>
+        <a href="{% url 'admin_login' %}">Admin Login</a>
+      </div>
+    </div>
+
+    <!-- Hero with Signup Form -->
+    <div class="hero">
+      <div class="signup-card">
+        <h2>{{ user_type|title }} Sign Up</h2>
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="id_username">Username</label>
+              {{ form.username }}
+            </div>
+            <div class="form-group" style="padding-left: 8px">
+              <label for="id_email">Email</label>
+              {{ form.email }}
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="id_first_name">First Name</label>
+              {{ form.first_name }}
+            </div>
+            <div class="form-group" style="padding-left: 8px">
+              <label for="id_last_name">Last Name</label>
+              {{ form.last_name }}
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="id_mobile">Mobile</label>
+              {{ form.mobile }}
+            </div>
+            <div class="form-group" style="padding-left: 8px">
+              <label for="id_state">State</label>
+              {{ form.state }}
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="id_picture">Profile Picture</label>
+              {{ form.picture }}
+            </div>
+            <div class="form-group" style="padding-left: 8px">
+              <label for="id_user_type">User Type</label>
+              {{ form.user_type }}
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="id_password1">Password</label>
+              {{ form.password1 }}
+            </div>
+            <div class="form-group" style="padding-left: 8px">
+              <label for="id_password2">Confirm Password</label>
+              {{ form.password2 }}
+            </div>
+          </div>
+
+          <input type="hidden" id="lat" name="latitude" />
+          <input type="hidden" id="lon" name="longitude" />
+
+          <button type="submit">Sign Up</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <div class="scroll-container">
+        <span>Emergency Helpline Services:</span>
+        <span>Andhra Pradesh</span>
+        <span>Arunachal Pradesh</span>
+        <span>Assam</span>
+        <span>Bihar</span>
+        <span>Chhattisgarh</span>
+        <span>Goa</span>
+        <span>Gujarat</span>
+        <span>Haryana</span>
+        <span>Himachal Pradesh</span>
+        <span>Jharkhand</span>
+        <span>Karnataka</span>
+        <span>Kerala</span>
+        <span>Madhya Pradesh</span>
+        <span>Maharashtra</span>
+        <span>Manipur</span>
+        <span>Meghalaya</span>
+        <span>Mizoram</span>
+        <span>Nagaland</span>
+        <span>Odisha</span>
+        <span>Punjab</span>
+        <span>Rajasthan</span>
+        <span>Sikkim</span>
+        <span>Tamil Nadu</span>
+        <span>Telangana</span>
+        <span>Tripura</span>
+        <span>Uttar Pradesh</span>
+        <span>Uttarakhand</span>
+        <span>West Bengal</span>
+        <span>Government Disaster Relief Support</span>
+      </div>
+    </div>
+  </body>
+</html>

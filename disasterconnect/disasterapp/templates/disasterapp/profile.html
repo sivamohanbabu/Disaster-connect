@@ -1,0 +1,237 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ user.user_type|title }} Dashboard - Disaster Connect</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        margin: 0;
+        font-family: "Inter", sans-serif;
+        background: #f7f9fc;
+        color: #333;
+      }
+      /* Sidebar */
+      .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 230px;
+        height: 100vh;
+        background: #1f3c88;
+        color: #fff;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      .sidebar h2 {
+        margin-bottom: 20px;
+        font-size: 18px;
+      }
+      .menu a {
+        display: block;
+        padding: 10px 15px;
+        margin: 6px 0;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 8px;
+        font-size: 14px;
+      }
+      .menu a.active,
+      .menu a:hover {
+        background: #304d9d;
+      }
+      .others {
+        margin-top: 20px;
+      }
+      .help-box {
+        background: #fff;
+        color: #333;
+        padding: 10px;
+        border-radius: 10px;
+        text-align: center;
+        font-size: 12px;
+      }
+      /* Main content */
+      .main {
+        margin-left: 250px;
+        padding: 20px;
+      }
+      .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+      }
+      .search input {
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        width: 300px;
+      }
+      .user {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .user img {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+      }
+      /* Dashboard grid */
+      .dashboard {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 20px;
+      }
+      .card {
+        background: #fff;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        margin-bottom: 20px;
+      }
+      .card h3 {
+        margin-bottom: 10px;
+        font-size: 16px;
+      }
+      .action-btn {
+        display: inline-block;
+        padding: 8px 14px;
+        background: #1f3c88;
+        color: #fff;
+        border-radius: 8px;
+        font-size: 13px;
+        text-decoration: none;
+        margin-top: 8px;
+      }
+      .right-panel {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+      .emergency-list ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      .emergency-list li {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px solid #eee;
+        font-size: 14px;
+      }
+      /* Placeholder charts */
+      .chart-placeholder {
+        background: #f4f4f4;
+        height: 180px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #777;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div>
+        <h2>🌐 Disaster Connect</h2>
+        <div class="menu">
+          <a href="#" class="active">Dashboard</a>
+          {% if user.user_type == "volunteer" %}
+          <a href="#">Add Alert</a>
+          <a href="#">Shelter</a>
+          <a href="#">Medical Camp</a>
+          {% elif user.user_type == "supervisor" %}
+          <a href="#">Alert Status</a>
+          <a href="#">Add Shelter</a>
+          <a href="#">Add Medical Camp</a>
+          {% elif user.user_type == "admin" %}
+          <a href="#">Alert Status</a>
+          <a href="#">Approve Shelter</a>
+          <a href="#">Approve Medical Camp</a>
+          {% endif %}
+        </div>
+        <div class="others">
+          <a href="#">⚙ Settings</a>
+          <a href="#">📞 Emergency Connect</a>
+          <a href="#">📅 Online Schedule</a>
+          <a href="#">❓ Help Desk</a>
+        </div>
+      </div>
+      <div class="help-box">
+        <p><strong>1800 890 3454</strong></p>
+        <p>emergency@gmail.com</p>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main">
+      <div class="topbar">
+        <div class="search"><input type="text" placeholder="Search..." /></div>
+        <div class="user">
+          <img src="{% static 'img/avatar.png' %}" alt="user" />
+          <span>{{ user.user_type|title }} ({{ user.username }})</span>
+        </div>
+      </div>
+
+      <div class="dashboard">
+        <!-- Left content -->
+        <div>
+          {% if user.user_type == "volunteer" %}
+          <div class="card">
+            <h3>Active Alerts</h3>
+            <p>Report disasters and emergencies in your area.</p>
+            <a href="#" class="action-btn">Add Alert</a>
+          </div>
+          {% elif user.user_type == "supervisor" %}
+          <div class="card">
+            <h3>Verify Alerts</h3>
+            <p>Review and verify alerts submitted by volunteers.</p>
+            <a href="#" class="action-btn">Verify Alerts</a>
+          </div>
+          {% elif user.user_type == "admin" %}
+          <div class="card">
+            <h3>Approve Alerts</h3>
+            <p>Approve verified alerts for further action.</p>
+            <a href="#" class="action-btn">Approve Alerts</a>
+          </div>
+          {% endif %}
+
+          <div class="card">
+            <h3>Shelters Status</h3>
+            <div class="chart-placeholder">[Shelter Graph]</div>
+          </div>
+        </div>
+
+        <!-- Right Panel -->
+        <div class="right-panel">
+          <div class="card">
+            <h3>Most Effected Areas</h3>
+            <div class="chart-placeholder">[Pie Chart]</div>
+          </div>
+          <div class="card emergency-list">
+            <h3>Emergency Alerted Places</h3>
+            <ul>
+              <li><span>Vishakapatnam</span> <span>Floods</span></li>
+              <li><span>Delhi NCR</span> <span>Heavy Rainfall</span></li>
+              <li><span>Kerala</span> <span>Floods</span></li>
+              <li><span>Telangana</span> <span>Hydra</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
