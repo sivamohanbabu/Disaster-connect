@@ -52,7 +52,6 @@ class SignUpForm(UserCreationForm):
             "state",
             "password1",
             "password2",
-            "user_type",
         ]
 
 

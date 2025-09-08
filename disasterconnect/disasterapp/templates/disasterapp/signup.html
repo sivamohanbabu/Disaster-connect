@@ -208,7 +208,7 @@
     <!-- Hero with Signup Form -->
     <div class="hero">
       <div class="signup-card">
-        <h2>{{ user_type|title }} Sign Up</h2>
+        <h2>Volunteer Sign Up</h2>
         <form method="post" enctype="multipart/form-data">
           {% csrf_token %}
 
@@ -250,10 +250,13 @@
               <label for="id_picture">Profile Picture</label>
               {{ form.picture }}
             </div>
-            <div class="form-group" style="padding-left: 8px">
+          <!-- Removed user_type field to disable user type selection -->
+          <!--
+          <div class="form-group" style="padding-left: 8px">
               <label for="id_user_type">User Type</label>
               {{ form.user_type }}
             </div>
+          -->
           </div>
 
           <div class="form-row">

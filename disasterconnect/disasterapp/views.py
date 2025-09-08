@@ -14,22 +14,17 @@ def signup_view(request, user_type):
         form = SignUpForm(request.POST, request.FILES)
         if form.is_valid():
             user = form.save(commit=False)
-            user.user_type = user_type
+            user.user_type = "volunteer"
             # Latitude and Longitude from hidden fields
             user.latitude = request.POST.get("latitude")
             user.longitude = request.POST.get("longitude")
             user.save()
 
-            # Redirect to the correct login based on user_type
-            if user_type == "volunteer":
-                return redirect("volunteer_login")
-            elif user_type == "supervisor":
-                return redirect("supervisor_login")
-            elif user_type == "adminuser":
-                return redirect("admin_login")
+            # Always redirect to volunteer login since all signups are volunteers
+            return redirect("volunteer_login")
 
     else:
-        form = SignUpForm(initial={"user_type": user_type})
+        form = SignUpForm()
     return render(
         request, "disasterapp/signup.html", {"form": form, "user_type": user_type}
     )
