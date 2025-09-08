@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset=a"UTF-8" />
+    <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Disaster Connect</title>
     <style>
@@ -62,10 +62,12 @@
       .hero-content h1 {
         font-size: 3rem;
         margin-bottom: 0px;
+        text-shadow: 2px 2px 4px #000000;
       }
 
       .hero-content p {
         font-size: 1.5rem;
+        text-shadow: 2px 2px 4px #000000;
       }
 
       /* Footer */
@@ -111,7 +113,7 @@
           src="{% static 'disasterapp/images/natural-disaster.jpg' %}"
           alt="Logo"
         />
-        <span>Disaster Connect</span>
+        <a href="{% url 'home' %}">Disaster Connect</a>
       </div>
       <div>
         <a href="{% url 'volunteer_login' %}">Volunteer Login</a>
