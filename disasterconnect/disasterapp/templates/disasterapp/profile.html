@@ -9,6 +9,8 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"
       rel="stylesheet"
     />
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
       body {
         margin: 0;
@@ -111,6 +113,7 @@
         font-size: 13px;
         text-decoration: none;
         margin-top: 8px;
+        cursor: pointer;
       }
       .right-panel {
         display: flex;
@@ -140,6 +143,76 @@
         color: #777;
         font-size: 14px;
       }
+      /* Modal styles */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+      }
+      .modal-content {
+        background-color: #fff;
+        margin: 5% auto;
+        padding: 20px;
+        border-radius: 12px;
+        width: 80%;
+        max-width: 600px;
+        max-height: 80vh;
+        overflow-y: auto;
+      }
+      .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+      .close:hover {
+        color: #000;
+      }
+      .form-group {
+        margin-bottom: 15px;
+      }
+      .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 600;
+      }
+      .form-group input,
+      .form-group textarea {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+      }
+      #map {
+        height: 300px;
+        border-radius: 8px;
+      }
+      .alert-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+      .alert-table th,
+      .alert-table td {
+        padding: 8px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+      }
+      .alert-table th {
+        background-color: #f2f2f2;
+      }
+      .alert-image {
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+        border-radius: 4px;
+      }
     </style>
   </head>
   <body>
@@ -150,7 +223,7 @@
         <div class="menu">
           <a href="#" class="active">Dashboard</a>
           {% if user.user_type == "volunteer" %}
-          <a href="#">Add Alert</a>
+          <a href="#" onclick="openModal()">Add Alert</a>
           <a href="#">Shelter</a>
           <a href="#">Medical Camp</a>
           {% elif user.user_type == "supervisor" %}
@@ -193,7 +266,37 @@
           <div class="card">
             <h3>Active Alerts</h3>
             <p>Report disasters and emergencies in your area.</p>
-            <a href="#" class="action-btn">Add Alert</a>
+            <button class="action-btn" onclick="openModal()">Add Alert</button>
+            {% if alerts %}
+            <table class="alert-table">
+              <thead>
+                <tr>
+                  <th>Incident</th>
+                  <th>Description</th>
+                  <th>Latitude</th>
+                  <th>Longitude</th>
+                  <th>Image</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for alert in alerts %}
+                <tr>
+                  <td>{{ alert.incident }}</td>
+                  <td>{{ alert.description|truncatechars:50 }}</td>
+                  <td>{{ alert.location_latitude }}</td>
+                  <td>{{ alert.location_longitude }}</td>
+                  <td>
+                    {% if alert.image %}
+                    <img src="{{ alert.image.url }}" alt="Alert Image" class="alert-image">
+                    {% else %}
+                    No Image
+                    {% endif %}
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+            {% endif %}
           </div>
           {% elif user.user_type == "supervisor" %}
           <div class="card">
@@ -233,5 +336,131 @@
         </div>
       </div>
     </div>
+
+    <!-- Modal -->
+    <div id="alertModal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h3>Add New Alert</h3>
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="{{ form.incident.id_for_label }}">Incident</label>
+            {{ form.incident }}
+          </div>
+          <div class="form-group">
+            <label for="{{ form.description.id_for_label }}">Description</label>
+            {{ form.description }}
+          </div>
+          <div class="form-group">
+            <label>Location (Click on the map to select)</label>
+            <div id="map"></div>
+            {{ form.location_latitude }}
+            {{ form.location_longitude }}
+          </div>
+          <div class="form-group">
+            <label for="{{ form.state.id_for_label }}">State</label>
+            {{ form.state }}
+          </div>
+          <div class="form-group">
+            <label for="{{ form.google_maps_link.id_for_label }}">Google Maps Link (Optional)</label>
+            {{ form.google_maps_link }}
+          </div>
+          <div class="form-group">
+            <label for="{{ form.image.id_for_label }}">Image</label>
+            {{ form.image }}
+          </div>
+          <button type="submit" class="action-btn">Submit Alert</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+      let map;
+      let marker;
+
+      function openModal() {
+        document.getElementById('alertModal').style.display = 'block';
+        if (!map) {
+          initMap();
+        }
+      }
+
+      function closeModal() {
+        document.getElementById('alertModal').style.display = 'none';
+      }
+
+      function initMap() {
+        map = L.map('map').setView([20.5937, 78.9629], 5); // Default to India
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Try to get user's current location
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            function(position) {
+              const lat = position.coords.latitude;
+              const lng = position.coords.longitude;
+              map.setView([lat, lng], 13);
+              if (marker) {
+                map.removeLayer(marker);
+              }
+              marker = L.marker([lat, lng]).addTo(map);
+              document.getElementById('id_location_latitude').value = lat;
+              document.getElementById('id_location_longitude').value = lng;
+              getStateFromLatLng(lat, lng);
+            },
+            function(error) {
+              console.warn('ERROR(' + error.code + '): ' + error.message);
+            }
+          );
+        }
+
+        map.on('click', function(e) {
+          if (marker) {
+            map.removeLayer(marker);
+          }
+          marker = L.marker(e.latlng).addTo(map);
+          document.getElementById('id_location_latitude').value = e.latlng.lat;
+          document.getElementById('id_location_longitude').value = e.latlng.lng;
+          getStateFromLatLng(e.latlng.lat, e.latlng.lng);
+        });
+      }
+
+      function getStateFromLatLng(lat, lng) {
+        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
+          .then(response => response.json())
+          .then(data => {
+            if (data && data.address && data.address.state) {
+              const state = data.address.state;
+              const stateSelect = document.getElementById('id_state');
+              if (stateSelect) {
+                // Find the option with the matching text
+                for (let option of stateSelect.options) {
+                  if (option.text === state) {
+                    stateSelect.value = option.value;
+                    break;
+                  }
+                }
+              }
+            }
+          })
+          .catch(error => {
+            console.warn('Error fetching state:', error);
+          });
+      }
+
+      // Close modal when clicking outside
+      window.onclick = function(event) {
+        const modal = document.getElementById('alertModal');
+        if (event.target == modal) {
+          modal.style.display = 'none';
+        }
+      }
+    </script>
   </body>
 </html>

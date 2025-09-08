@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
-from .forms import SignUpForm, LoginForm
+from .forms import SignUpForm, LoginForm, AlertForm
 from django.http import HttpResponse
-from .models import CustomUser
+from .models import CustomUser, Alert
 
 
 def home(request):
@@ -54,4 +54,14 @@ from django.contrib.auth.decorators import login_required
 @login_required
 def profile_view(request):
     user = request.user  # current logged-in user
-    return render(request, "disasterapp/profile.html", {"user": user})
+    alerts = Alert.objects.filter(user=user).order_by("-created_at")
+    if request.method == "POST":
+        form = AlertForm(request.POST, request.FILES)
+        if form.is_valid():
+            alert = form.save(commit=False)
+            alert.user = user
+            alert.save()
+            return redirect("profile")
+    else:
+        form = AlertForm()
+    return render(request, "disasterapp/profile.html", {"user": user, "form": form, "alerts": alerts})

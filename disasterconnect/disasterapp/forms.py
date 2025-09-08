@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from .models import CustomUser
+from .models import CustomUser, Alert
 
 STATES = [
     ("Andhra Pradesh", "Andhra Pradesh"),
@@ -58,3 +58,14 @@ class SignUpForm(UserCreationForm):
 class LoginForm(AuthenticationForm):
     username = forms.CharField(label="Email / Username")
     password = forms.CharField(widget=forms.PasswordInput)
+
+
+class AlertForm(forms.ModelForm):
+    class Meta:
+        model = Alert
+        fields = ["incident", "description", "state", "location_latitude", "location_longitude", "google_maps_link", "image"]
+        widgets = {
+            "location_latitude": forms.HiddenInput(),
+            "location_longitude": forms.HiddenInput(),
+            "description": forms.Textarea(attrs={"rows": 3}),
+        }
