@@ -10,7 +10,10 @@
       rel="stylesheet"
     />
     <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
     <style>
       body {
         margin: 0;
@@ -287,10 +290,12 @@
                   <td>{{ alert.location_longitude }}</td>
                   <td>
                     {% if alert.image %}
-                    <img src="{{ alert.image.url }}" alt="Alert Image" class="alert-image">
-                    {% else %}
-                    No Image
-                    {% endif %}
+                    <img
+                      src="{{ alert.image.url }}"
+                      alt="Alert Image"
+                      class="alert-image"
+                    />
+                    {% else %} No Image {% endif %}
                   </td>
                 </tr>
                 {% endfor %}
@@ -355,15 +360,16 @@
           <div class="form-group">
             <label>Location (Click on the map to select)</label>
             <div id="map"></div>
-            {{ form.location_latitude }}
-            {{ form.location_longitude }}
+            {{ form.location_latitude }} {{ form.location_longitude }}
           </div>
           <div class="form-group">
             <label for="{{ form.state.id_for_label }}">State</label>
             {{ form.state }}
           </div>
           <div class="form-group">
-            <label for="{{ form.google_maps_link.id_for_label }}">Google Maps Link (Optional)</label>
+            <label for="{{ form.google_maps_link.id_for_label }}"
+              >Google Maps Link (Optional)</label
+            >
             {{ form.google_maps_link }}
           </div>
           <div class="form-group">
@@ -382,27 +388,27 @@
       let marker;
 
       function openModal() {
-        document.getElementById('alertModal').style.display = 'block';
+        document.getElementById("alertModal").style.display = "block";
         if (!map) {
           initMap();
         }
       }
 
       function closeModal() {
-        document.getElementById('alertModal').style.display = 'none';
+        document.getElementById("alertModal").style.display = "none";
       }
 
       function initMap() {
-        map = L.map('map').setView([20.5937, 78.9629], 5); // Default to India
+        map = L.map("map").setView([20.5937, 78.9629], 5); // Default to India
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '© OpenStreetMap contributors'
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          attribution: "© OpenStreetMap contributors",
         }).addTo(map);
 
         // Try to get user's current location
         if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(
-            function(position) {
+            function (position) {
               const lat = position.coords.latitude;
               const lng = position.coords.longitude;
               map.setView([lat, lng], 13);
@@ -410,34 +416,36 @@
                 map.removeLayer(marker);
               }
               marker = L.marker([lat, lng]).addTo(map);
-              document.getElementById('id_location_latitude').value = lat;
-              document.getElementById('id_location_longitude').value = lng;
+              document.getElementById("id_location_latitude").value = lat;
+              document.getElementById("id_location_longitude").value = lng;
               getStateFromLatLng(lat, lng);
             },
-            function(error) {
-              console.warn('ERROR(' + error.code + '): ' + error.message);
+            function (error) {
+              console.warn("ERROR(" + error.code + "): " + error.message);
             }
           );
         }
 
-        map.on('click', function(e) {
+        map.on("click", function (e) {
           if (marker) {
             map.removeLayer(marker);
           }
           marker = L.marker(e.latlng).addTo(map);
-          document.getElementById('id_location_latitude').value = e.latlng.lat;
-          document.getElementById('id_location_longitude').value = e.latlng.lng;
+          document.getElementById("id_location_latitude").value = e.latlng.lat;
+          document.getElementById("id_location_longitude").value = e.latlng.lng;
           getStateFromLatLng(e.latlng.lat, e.latlng.lng);
         });
       }
 
       function getStateFromLatLng(lat, lng) {
-        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
-          .then(response => response.json())
-          .then(data => {
+        fetch(
+          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`
+        )
+          .then((response) => response.json())
+          .then((data) => {
             if (data && data.address && data.address.state) {
               const state = data.address.state;
-              const stateSelect = document.getElementById('id_state');
+              const stateSelect = document.getElementById("id_state");
               if (stateSelect) {
                 // Find the option with the matching text
                 for (let option of stateSelect.options) {
@@ -449,18 +457,18 @@
               }
             }
           })
-          .catch(error => {
-            console.warn('Error fetching state:', error);
+          .catch((error) => {
+            console.warn("Error fetching state:", error);
           });
       }
 
       // Close modal when clicking outside
-      window.onclick = function(event) {
-        const modal = document.getElementById('alertModal');
+      window.onclick = function (event) {
+        const modal = document.getElementById("alertModal");
         if (event.target == modal) {
-          modal.style.display = 'none';
+          modal.style.display = "none";
         }
-      }
+      };
     </script>
   </body>
 </html>
